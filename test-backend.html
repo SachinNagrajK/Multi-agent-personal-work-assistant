@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover { background: #7c3aed; }
+        #output {
+            background: #2a2a2a;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Backend Connection Test</h1>
+    <p>Testing connection to http://localhost:8000</p>
+    
+    <button onclick="testRoot()">Test Root Endpoint (GET /)</button>
+    <button onclick="testSimple()">Test Simple Endpoint (POST /api/test)</button>
+    <button onclick="testChat()">Test Chat Endpoint (POST /api/ai/chat)</button>
+    
+    <div id="output">Results will appear here...</div>
+    
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            output.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+        }
+        
+        async function testRoot() {
+            output.innerHTML = '';
+            log('Testing GET / ...');
+            try {
+                const response = await fetch('http://localhost:8000/');
+                const data = await response.json();
+                log('✅ SUCCESS!', 'success');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ ERROR: ' + error.message, 'error');
+            }
+        }
+        
+        async function testSimple() {
+            output.innerHTML = '';
+            log('Testing POST /api/test ...');
+            try {
+                const response = await fetch('http://localhost:8000/api/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ test: 'hello from test page' })
+                });
+                const data = await response.json();
+                log('✅ SUCCESS!', 'success');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ ERROR: ' + error.message, 'error');
+            }
+        }
+        
+        async function testChat() {
+            output.innerHTML = '';
+            log('Testing POST /api/ai/chat ...');
+            try {
+                const response = await fetch('http://localhost:8000/api/ai/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'test message from test page' })
+                });
+                const data = await response.json();
+                log('✅ SUCCESS!', 'success');
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log('❌ ERROR: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
